@@ -28,10 +28,6 @@ export abstract class Grammar extends BaseGrammar {
         this.selectComponents.map((component) => {
             const componentName = '_' + component
             if(Array.isArray(query[componentName]) && query[componentName].length === 0) {
-            } else if (typeof query[componentName] === 'object' && query[componentName] === null) {
-            } else if (typeof query[componentName] === 'boolean' && query[componentName] === false) {
-            } else if (typeof query[componentName] === 'number' && query[componentName] === 0) {
-            } else if (query[componentName] instanceof IndexHint && query[componentName].type === '') {
             } else {
                 const method = `compile${component.charAt(0).toUpperCase() + component.slice(1)}`;
                 if (typeof this[method as keyof typeof this] === 'function') {
@@ -56,7 +52,7 @@ export abstract class Grammar extends BaseGrammar {
     }
 
     compileSelect(query: Builder): string {
-        if ((query._unions || query._havings) && query._aggregate) {
+        if ((query._unions.length || query._havings.length) && query._aggregate.length) {
             return this.compileUnionAggregate(query);
         }
 
@@ -455,8 +451,9 @@ export abstract class Grammar extends BaseGrammar {
     }
 
     compileUnionAggregate(query: any): string {
-        const sql = this.compileAggregate(query, query.aggregate);
-        query.aggregate = null;
+        console.log(query);
+        const sql = this.compileAggregate(query, query._aggregate);
+        query._aggregate = [];
         return `${sql} from (${this.compileSelect(query)}) as ${this.wrapTable('temp_table')}`;
     }
 

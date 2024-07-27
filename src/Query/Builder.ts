@@ -51,7 +51,7 @@ export class Builder
         union: [],
         unionOrder: []
     };
-    public _aggregate: any = null;
+    public _aggregate: any = [];
     public _columns: any[] = [];
     public _distinct: boolean | any[] = false;
     public _from: Expression | string | Builder | Function = '';
@@ -70,8 +70,8 @@ export class Builder
     public _unionOrders: any[] = [];
     public _lock: string | boolean = false;
     public _beforeQueryCallbacks: any[] = [];
-    protected _afterQueryCallbacks: any[] = [];
-    public _operators = [
+    public _afterQueryCallbacks: any[] = [];
+    private _operators = [
         '=', '<', '>', '<=', '>=', '<>', '!=', '<=>',
         'like', 'like binary', 'not like', 'ilike',
         '&', '|', '^', '<<', '>>', '&~', 'is', 'is not',
