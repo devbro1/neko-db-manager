@@ -1775,8 +1775,8 @@ export class Builder
 
     insert(values: any): boolean | number
     {
-        if (!values.length) return true;
-        const isArrayOfObjects = values.every((val: any) => typeof val === 'object' && !Array.isArray(val));
+        if (0 === Object.keys(values).length) return true;
+        const isArrayOfObjects = Array.isArray(values);
         if (!isArrayOfObjects)
         {
             values = [values];
