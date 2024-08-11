@@ -63,5 +63,4 @@ class SqlServerConnection extends Connection {
     getDefaultPostProcessor(): any {
         return new SqlServerProcessor();
     }
-    
 }

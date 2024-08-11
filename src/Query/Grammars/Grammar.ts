@@ -26,7 +26,7 @@ export abstract class Grammar extends BaseGrammar {
     compileComponents(query: any): any {
         let rc = {};
         this.selectComponents.map((component) => {
-            const componentName = '_' + component
+            const componentName = '_' + component;
             if(Array.isArray(query[componentName]) && query[componentName].length === 0) {
             } else {
                 const method = `compile${component.charAt(0).toUpperCase() + component.slice(1)}`;
@@ -66,7 +66,7 @@ export abstract class Grammar extends BaseGrammar {
         
         const sql = this.concatenate(this.compileComponents(query));
 
-        if (query._unions) {
+        if (query._unions.length) {
             const unionSql = this.compileUnions(query);
             return `${this.wrapUnion(sql)} ${unionSql}`;
         }
@@ -76,7 +76,7 @@ export abstract class Grammar extends BaseGrammar {
     }
 
     compileColumns(query: Builder, columns: string[]): string {
-        if (query._aggregate) return '';
+        if (query._aggregate.length) return '';
 
         const prefix = query._distinct ? 'select distinct ' : 'select ';
         return prefix + this.columnize(columns);

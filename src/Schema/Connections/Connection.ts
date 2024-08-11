@@ -106,6 +106,7 @@ export abstract class Connection
             }
             const statement = this.prepared(this.prepare(query));
             this.bindValues(statement, this.prepareBindings(bindings));
+            console.log(statement);
             statement.execute();
             return statement.fetchAll();
         });
@@ -261,8 +262,8 @@ export abstract class Connection
         });
     }
     
-    prepareBindings(bindings: any[]): any[] {
-        return bindings.map((value, key) => {
+    prepareBindings(bindings: object = {}): any[] {
+        return Object.entries(bindings).map((value, key) => {
             if (value instanceof Date) {
                 return value.toISOString();
             } else if (typeof value === 'boolean') {
@@ -272,7 +273,7 @@ export abstract class Connection
         });
     }
     
-    run(query: string, bindings: any[], callback: (query: string, bindings: any[]) => any): any {
+    run(query: string, bindings: any[]=[], callback: (query: string, bindings: any[]) => any): any {
         this.beforeExecutingCallbacks.forEach(cb => cb(query, bindings, this));
         this.reconnectIfMissingConnection();
     

@@ -1380,7 +1380,9 @@ export class Builder
     toSql(): string
     {
         this.applyBeforeQueryCallbacks();
-        return this._grammar.compileSelect(this);
+        let rc = this._grammar.compileSelect(this);
+        console.log(rc);
+        return rc;
     }
 
     toRawSql(): string

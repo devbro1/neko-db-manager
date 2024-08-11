@@ -11,6 +11,7 @@ import driver from 'better-sqlite3';
 export class SqliteConnection extends Connection {
     protected db: any;
     prepare(query: string) {
+        console.log(query);
         return this.db.prepare(query);
     }
     exec(query: any) {
@@ -33,6 +34,7 @@ export class SqliteConnection extends Connection {
         let rc = this.db.prepare('select SQLITE_VERSION() as version').get();
         return rc.version;
     }
+
     constructor(database: string = '', tablePrefix: string = '', config: any = {}) {
         super(database, tablePrefix, config);
 
