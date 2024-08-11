@@ -1381,7 +1381,6 @@ export class Builder
     {
         this.applyBeforeQueryCallbacks();
         let rc = this._grammar.compileSelect(this);
-        console.log(rc);
         return rc;
     }
 

@@ -285,6 +285,7 @@ export abstract class Connection
     
         const start = performance.now();
     
+        console.log(query);
         let result;
         // try {
             result = callback(query, bindings);

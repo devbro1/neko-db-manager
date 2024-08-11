@@ -362,6 +362,9 @@ export abstract class Grammar extends BaseGrammar {
     }
 
     compileLimit(query: any, limit: number): string {
+        if(limit === 0) {
+            return '';
+        }
         return `limit ${parseInt(limit.toString(), 10)}`;
     }
 
@@ -416,6 +419,9 @@ export abstract class Grammar extends BaseGrammar {
     }
 
     compileOffset(query: any, offset: number): string {
+        if(offset === 0) {
+            return '';
+        }
         return `offset ${parseInt(offset.toString(), 10)}`;
     }
 
@@ -613,16 +619,20 @@ export abstract class Grammar extends BaseGrammar {
     }
 
     compileWheres(query: any): string {
-        if (!query.wheres.length) {
+        if (!query._wheres.length) {
             return '';
         }
-        const compiledWheres = query.wheres.map((where: any) => this.compileWhere(query, where)).join(' ');
+        const compiledWheres = query._wheres.map((where: any) => this.compileWhere(query, where)).join(' ');
+        console.log(compiledWheres);
         return `where ${this.removeLeadingBoolean(compiledWheres)}`;
     }
 
     compileWhere(query: any, where: any): string {
         // Placeholder for where compilation logic
-        return ''; // Actual implementation needed based on 'where' type
+        if(where.type === 'Basic') {
+            return [where.boolean, where.column, where.operator, where.value].join(' ')
+        }
+        return 'WHERE NOT IMPLEMENTED'; // Actual implementation needed based on 'where' type
     }
 
     arrFlatten(array: any[]): any[] {
