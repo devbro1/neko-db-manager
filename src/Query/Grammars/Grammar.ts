@@ -623,14 +623,13 @@ export abstract class Grammar extends BaseGrammar {
             return '';
         }
         const compiledWheres = query._wheres.map((where: any) => this.compileWhere(query, where)).join(' ');
-        console.log(compiledWheres);
         return `where ${this.removeLeadingBoolean(compiledWheres)}`;
     }
 
     compileWhere(query: any, where: any): string {
         // Placeholder for where compilation logic
         if(where.type === 'Basic') {
-            return [where.boolean, where.column, where.operator, where.value].join(' ')
+            return [where.boolean, where.column, where.operator, '?'].join(' ');
         }
         return 'WHERE NOT IMPLEMENTED'; // Actual implementation needed based on 'where' type
     }

@@ -6,6 +6,8 @@ import { listeners } from "process";
 import { Connection } from "pg";
 import { SqliteConnection } from "../src/Schema/Connections/SqliteConnection";
 
+import Database from 'better-sqlite3';
+
 describe("sqlite database", () => {
   let query: any;
   beforeEach(async () => {
@@ -44,5 +46,19 @@ describe("sqlite database", () => {
 
     result = conn.query().from("persons").select('*').where('age','>',85).get();
     expect(result.length).toBe(3);
+
+    result = conn.query().from("persons").select('*').where('age','>',85).where('name','Person9').get();
+    expect(result.length).toBe(1);
+
+    result = conn.query().from("persons").select('*').where('age','>',25).where('age','<','85').get();
+    expect(result.length).toBe(5);
   });
+
+  // test("raw testing", () => {
+  //   let db = new Database('/tmp/database.db');
+
+  //   let stmt = db.prepare('select *, :age from persons where age > :age');
+  //   let rc = stmt.all({age: 85});
+  //   console.log(rc);
+  // });
 });

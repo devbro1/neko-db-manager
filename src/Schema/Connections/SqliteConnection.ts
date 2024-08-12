@@ -87,6 +87,17 @@ export class SqliteConnection extends Connection {
     getAllFromStatement(statement: any): any {
         return statement.all();
     }
+
+    select(query: string, bindings: any[] = [], useReadPdo: boolean = true): any[] {
+        return this.run(query, bindings, (query: string, bindings: any[]) => {
+            if (this.isPretending()) {
+                return [];
+            }
+            const statement = this.prepared(this.prepare(query));
+            bindings = Object.values(bindings);
+            return statement.all(bindings);
+        });
+    }
     
     getSchemaState(files: any = null, processFactory: (() => void) | null = null): any {
         throw new Error('Not Implemented');

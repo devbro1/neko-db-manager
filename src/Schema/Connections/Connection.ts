@@ -284,14 +284,13 @@ export abstract class Connection
         this.reconnectIfMissingConnection();
     
         const start = performance.now();
-    
-        console.log(query);
+
         let result;
-        // try {
+        try {
             result = callback(query, bindings);
-        // } catch (e) {
-        //     result = this.handleQueryException(e, query, bindings, callback);
-        // }
+        } catch (e) {
+            throw e;
+        }
     
         this.logQuery(query, bindings, this.getElapsedTime(start));
     
