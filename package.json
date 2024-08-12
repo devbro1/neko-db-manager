@@ -36,6 +36,7 @@
   "dependencies": {
     "@types/lodash": "^4.17.0",
     "@types/sqlstring": "^2.3.2",
+    "@types/tmp": "^0.2.6",
     "better-sqlite3": "^10.0.0",
     "compare-versions": "^6.1.0",
     "lodash": "^4.17.21",
@@ -50,7 +51,9 @@
     "sqlite3": "^5.1.7",
     "sqlstring": "^2.3.3",
     "sync-threads": "^1.0.1",
-    "synckit": "^0.9.0"
+    "synckit": "^0.9.0",
+    "tmp": "^0.2.3",
+    "unique-filename": "^3.0.0"
   },
   "directories": {
     "doc": "docs",

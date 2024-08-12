@@ -5,15 +5,21 @@ import { Query } from "../src/index";
 import { listeners } from "process";
 import { Connection } from "pg";
 import { SqliteConnection } from "../src/Schema/Connections/SqliteConnection";
-
+import tmp from 'tmp';
 import Database from 'better-sqlite3';
+import os from 'os';
+import * as fs from 'fs';
 
+
+let db_name = '';
 describe("sqlite database", () => {
   let query: any;
   beforeEach(async () => {
+    db_name = tmp.fileSync({ prefix: 'sqlite-test-', postfix: '.db' }).name;
 
+    console.log("test sqlitefilename", db_name);
     const db = await open({
-        filename: '/tmp/database.db',
+        filename: db_name,
         driver: sqlite3.Database
       });
     
@@ -23,6 +29,12 @@ describe("sqlite database", () => {
         name TEXT,
         age INTEGER
     )`);
+
+    await db.exec(`CREATE TABLE IF NOT EXISTS persons2 (
+      id INTEGER PRIMARY KEY,
+      name TEXT,
+      age INTEGER
+  )`);
 
     await db.exec(`INSERT INTO persons (name, age) VALUES ('Person1', 11)`);
     await db.exec(`INSERT INTO persons (name, age) VALUES ('Person2', 22)`);
@@ -37,10 +49,14 @@ describe("sqlite database", () => {
 
     await db.close();
   });
+
+  afterAll(() => {
+    fs.unlinkSync(db_name);
+  });
   
   test("sqlite basic select", () => {
     let result;
-    const conn = new SqliteConnection("/tmp/database.db",'', { client: "sqlite", connection: "/tmp/database.db"});
+    const conn = new SqliteConnection(db_name);
     result = conn.query().from("persons").select('*').get();
     expect(result.length).toBe(10);
 
@@ -52,6 +68,16 @@ describe("sqlite database", () => {
 
     result = conn.query().from("persons").select('*').where('age','>',25).where('age','<','85').get();
     expect(result.length).toBe(5);
+  });
+
+
+  test("sqlite basic select", () => {
+    let result;
+    const conn = new SqliteConnection(db_name);
+
+    conn.query().from('persons2').insert({name: "meow1",age:100});
+    result = conn.query().from("persons2").select('*').get();
+    expect(result.length).toBe(1);
   });
 
   // test("raw testing", () => {
