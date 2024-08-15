@@ -245,6 +245,7 @@ export abstract class Connection
     }
     
     bindValues(statement: any, bindings: any[]): void {
+        console.log(bindings);
         for (const [key, value] of Object.entries(bindings)) {
             let bind_type = 'string';
             if(isInteger(value)) {

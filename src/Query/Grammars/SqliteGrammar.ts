@@ -95,17 +95,22 @@ export class SqliteGrammar extends Grammar {
     }
 
     compileUpdateColumns(query: any, values: object): string {
-        console.log(values);
         const jsonGroups = this.groupJsonColumnsForUpdate(values);
-        return Object.entries(values).filter(([key]) => !this.isJsonSelector(key))
+        let rc = Object.entries(values).filter(([key]) => !this.isJsonSelector(key))
             .concat(Object.entries(jsonGroups))
-            .map(([key, value]) => {
+            .map((mm) => {
+                console.log(mm);
+                let key = mm[1].bindings;
+                let value = mm[1].value;
                 const column = key.split('.').pop();
                 // @ts-ignore
                 value = jsonGroups[key] ? this.compileJsonPatch(column, value) : this.parameter(value);
                 // @ts-ignore
                 return `${this.wrap(column)} = ${value}`;
-            }).join(', ');
+            })
+            .join(', ');
+
+        return rc;
     }
 
     wrapJsonFieldAndPath(column: string): [string, string] {

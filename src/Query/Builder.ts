@@ -1854,7 +1854,15 @@ export class Builder
     {
         this.applyBeforeQueryCallbacks();
         const formattedValues = Object.entries(values).map(([key, value]) => {
+            if(!(value instanceof Builder)) {
+                return {
+                    value: value,
+                    bindings: key,
+                }
+            }
+
             if(value instanceof Builder) {
+                throw new Error("not implemented");
                 return {
                     value: value instanceof this.constructor ? `(${ (value as Builder).toSql() })` : value,
                     bindings: value instanceof this.constructor ? (value as Builder).getBindings() : value
@@ -1869,6 +1877,7 @@ export class Builder
             }
         });
 
+        console.log(formattedValues);
         const sql = this._grammar.compileUpdate(this, formattedValues);
         return this._connection.update(sql, this.cleanBindings(
             this._grammar.prepareBindingsForUpdate(this._bindings, formattedValues)

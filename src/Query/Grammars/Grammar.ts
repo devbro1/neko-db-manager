@@ -507,10 +507,13 @@ export abstract class Grammar extends BaseGrammar {
     }
 
     compileUpdate(query: any, values: any): string {
-        console.log(values);
         const table = this.wrapTable(query._from);
         const columns = this.compileUpdateColumns(query, values);
         const where = this.compileWheres(query);
+
+        console.log(table);
+        console.log(columns);
+        console.log(where);
 
         if (query._joins.length) {
             return this.compileUpdateWithJoins(query, table, columns, where);
@@ -520,7 +523,6 @@ export abstract class Grammar extends BaseGrammar {
     }
 
     compileUpdateColumns(query: any, values: any): string {
-        console.log(query,values);
         return Object.entries(values).map(([key, value]) => `${this.wrap(key)} = ${this.parameter(value)}`).join(', ');
     }
 
