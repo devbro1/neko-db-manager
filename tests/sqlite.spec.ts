@@ -71,13 +71,22 @@ describe("sqlite database", () => {
   });
 
 
-  test("sqlite basic select", () => {
+  test.only("sqlite insert,update,delete", () => {
     let result;
     const conn = new SqliteConnection(db_name);
 
     conn.query().from('persons2').insert({name: "meow1",age:100});
     result = conn.query().from("persons2").select('*').get();
     expect(result.length).toBe(1);
+
+    conn.query().from('persons2').insert([{name: "meow2",age:102},{name: "meow3",age:103}]);
+    result = conn.query().from("persons2").select('*').get();
+    expect(result.length).toBe(3);
+
+    conn.query().from('persons2').where('name','meow2').update({age:202});
+    result = conn.query().from("persons2").select('*').where('name','meow2').get();
+    expect(result[0]).toBe(3);
+
   });
 
   // test("raw testing", () => {

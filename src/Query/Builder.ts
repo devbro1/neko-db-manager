@@ -174,12 +174,12 @@ export class Builder
         {
             query = this.prependDatabaseNameIfCrossDatabaseQuery(query);
             return [query.toSql(), query.getBindings()];
-        } else if (typeof query === 'string')
+        } else if (['string','number'].includes(typeof query) )
         {
             return [query, []];
         } else
         {
-            throw new Error('A subquery must be a query builder instance, a Closure, or a string.');
+            throw new Error('A subquery must be a query builder instance, a Closure, or a string. but got ' + typeof query);
         }
     }
 

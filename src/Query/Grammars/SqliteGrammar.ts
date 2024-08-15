@@ -80,7 +80,7 @@ export class SqliteGrammar extends Grammar {
     }
 
     compileUpdate(query: any, values: object): string {
-        if (query.joins || query.limit) {
+        if (query._joins.length || query._limit) {
             return this.compileUpdateWithJoinsOrLimit(query, values);
         }
         return super.compileUpdate(query, values);
@@ -95,6 +95,7 @@ export class SqliteGrammar extends Grammar {
     }
 
     compileUpdateColumns(query: any, values: object): string {
+        console.log(values);
         const jsonGroups = this.groupJsonColumnsForUpdate(values);
         return Object.entries(values).filter(([key]) => !this.isJsonSelector(key))
             .concat(Object.entries(jsonGroups))
@@ -146,9 +147,9 @@ export class SqliteGrammar extends Grammar {
     }
 
     compileUpdateWithJoinsOrLimit(query: any, values: object): string {
-        const table = this.wrapTable(query.from);
+        const table = this.wrapTable(query._from);
         const columns = this.compileUpdateColumns(query, values);
-        const alias = query.from.split(/\s+as\s+/i).pop();
+        const alias = query._from.split(/\s+as\s+/i).pop();
         const selectSql = this.compileSelect(query.select(`${alias}.rowid`));
 
         return `update ${table} set ${columns} where ${this.wrap('rowid')} in (${selectSql})`;

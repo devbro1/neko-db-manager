@@ -11,6 +11,7 @@ import Database from 'better-sqlite3';
 export class SqliteConnection extends Connection {
     protected db: any;
     prepare(query: string) {
+        console.log(query);
         return this.db.prepare(query);
     }
     exec(query: any) {

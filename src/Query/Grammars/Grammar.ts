@@ -102,8 +102,12 @@ export abstract class Grammar extends BaseGrammar {
     // Additional compilation methods for different query parts...
 
     // Helper methods
-    columnize(columns: string[]): string {
-        return columns.map(column => this.wrap(column)).join(', ');
+    columnize(columns: string[] | object): string {
+        if(Array.isArray(columns)) {
+            return columns.map(column => this.wrap(column)).join(', ');
+        }
+
+        return Object.keys(columns).join(", ");
     }
 
     removeLeadingBoolean(expression: string): string {
@@ -169,8 +173,8 @@ export abstract class Grammar extends BaseGrammar {
     }
 
     // Helper method to parameterize an array of values for SQL
-    parameterize(values: any[]): string {
-        return values.map(value => this.parameter(value)).join(', ');
+    parameterize(values: Object): string {
+        return Object.values(values).map(value => this.parameter(value)).join(', ');
     }
 
     whereDay(query: any, where: any): string {
@@ -470,21 +474,17 @@ export abstract class Grammar extends BaseGrammar {
 
     compileInsert(query: any, values: any[]): string {
         const table = this.wrapTable(query._from);
-
         if (!values.length) {
             return `insert into ${table} default values`;
         }
 
-        if (!Array.isArray(values[0])) {
+        if (!Array.isArray(values)) {
             values = [values];
         }
 
         const columns = this.columnize(Object.keys(values[0]));
         const parameters = values.map(record => `(${this.parameterize(record)})`).join(', ');
 
-        console.log(values);
-        console.log(columns);
-        console.log(parameters);
         return `insert into ${table} (${columns}) values ${parameters}`;
     }
 
@@ -507,11 +507,12 @@ export abstract class Grammar extends BaseGrammar {
     }
 
     compileUpdate(query: any, values: any): string {
-        const table = this.wrapTable(query.from);
+        console.log(values);
+        const table = this.wrapTable(query._from);
         const columns = this.compileUpdateColumns(query, values);
         const where = this.compileWheres(query);
 
-        if (query.joins) {
+        if (query._joins.length) {
             return this.compileUpdateWithJoins(query, table, columns, where);
         }
 
@@ -519,6 +520,7 @@ export abstract class Grammar extends BaseGrammar {
     }
 
     compileUpdateColumns(query: any, values: any): string {
+        console.log(query,values);
         return Object.entries(values).map(([key, value]) => `${this.wrap(key)} = ${this.parameter(value)}`).join(', ');
     }
 

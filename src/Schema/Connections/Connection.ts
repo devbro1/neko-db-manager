@@ -172,15 +172,13 @@ export abstract class Connection
     
     statement(query: string, bindings: any[] = []): boolean {
         return this.run(query, bindings, (query: string, bindings: any[]) => {
-            console.log(query);
             if (this.isPretending()) {
                 return true;
             }
 
             const statement = this.prepare(query);
-            this.bindValues(statement, this.prepareBindings(bindings));
             this.recordsHaveBeenModified();
-            return statement.execute();
+            return statement.run();
         });
     }
 
