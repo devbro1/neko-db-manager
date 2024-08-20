@@ -85,7 +85,7 @@ describe("sqlite database", () => {
 
     conn.query().from('persons2').where('name','meow2').update({age:202});
     result = conn.query().from("persons2").select('*').where('name','meow2').get();
-    expect(result[0]).toBe(3);
+    expect(result[0].age).toBe(202);
 
   });
 

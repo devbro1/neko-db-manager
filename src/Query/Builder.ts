@@ -1856,8 +1856,8 @@ export class Builder
         const formattedValues = Object.entries(values).map(([key, value]) => {
             if(!(value instanceof Builder)) {
                 return {
-                    value: value,
-                    bindings: key,
+                    value: key,
+                    bindings: value,
                 }
             }
 
@@ -1877,7 +1877,6 @@ export class Builder
             }
         });
 
-        console.log(formattedValues);
         const sql = this._grammar.compileUpdate(this, formattedValues);
         return this._connection.update(sql, this.cleanBindings(
             this._grammar.prepareBindingsForUpdate(this._bindings, formattedValues)

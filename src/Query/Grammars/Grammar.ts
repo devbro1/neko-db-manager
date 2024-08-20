@@ -375,6 +375,8 @@ export abstract class Grammar extends BaseGrammar {
     parameter(value: any): string {
         if (typeof value === 'string') {
             return `'${value.replace(/'/g, "''")}'`; // Properly escape strings
+        } else if (typeof value === 'number') {
+            return ""+value;
         } else if (value === null) {
             return 'NULL';
         } else {
@@ -511,10 +513,6 @@ export abstract class Grammar extends BaseGrammar {
         const columns = this.compileUpdateColumns(query, values);
         const where = this.compileWheres(query);
 
-        console.log(table);
-        console.log(columns);
-        console.log(where);
-
         if (query._joins.length) {
             return this.compileUpdateWithJoins(query, table, columns, where);
         }
@@ -547,6 +545,9 @@ export abstract class Grammar extends BaseGrammar {
 
     resolveValue(value: any): any {
         // This is a placeholder; actual implementation may involve resolving promises or similar operations
+        if(typeof value === 'object' && value.bindings) {
+            return value.bindings;
+        }
         return typeof value === 'function' ? value() : value;
     }
 

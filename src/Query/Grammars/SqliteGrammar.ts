@@ -99,14 +99,13 @@ export class SqliteGrammar extends Grammar {
         let rc = Object.entries(values).filter(([key]) => !this.isJsonSelector(key))
             .concat(Object.entries(jsonGroups))
             .map((mm) => {
-                console.log(mm);
-                let key = mm[1].bindings;
-                let value = mm[1].value;
+                let key = mm[1].value;
+                let value = mm[1].bindings;
                 const column = key.split('.').pop();
                 // @ts-ignore
                 value = jsonGroups[key] ? this.compileJsonPatch(column, value) : this.parameter(value);
                 // @ts-ignore
-                return `${this.wrap(column)} = ${value}`;
+                return `${this.wrap(column)} = ?`;
             })
             .join(', ');
 

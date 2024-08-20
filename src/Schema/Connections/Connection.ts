@@ -190,10 +190,10 @@ export abstract class Connection
             }
     
             const statement = this.prepare(query);
-            this.bindValues(statement, this.prepareBindings(bindings));
-            statement.execute();
-    
-            const count = statement.rowCount();
+            let b = this.prepareBindings(bindings);
+            let info = statement.run(b);
+
+            const count = info.changes;
             this.recordsHaveBeenModified(count > 0);
     
             return count;
@@ -263,7 +263,7 @@ export abstract class Connection
     }
     
     prepareBindings(bindings: any[]): any[] {
-        let rc: any = {};
+        let rc: any = [];
         for (const [key, value] of Object.entries(bindings)) {
             if (value instanceof Date) {
                 rc[key] = value.toISOString();
