@@ -2020,8 +2020,9 @@ export class Builder
 
         this.applyBeforeQueryCallbacks();
 
+        const sql = this._grammar.compileDelete(this);
         return this._connection.delete(
-            this._grammar.compileDelete(this), this.cleanBindings(
+            sql, this.cleanBindings(
                 this._grammar.prepareBindingsForDelete(this._bindings)
             )
         );

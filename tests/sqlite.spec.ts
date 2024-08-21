@@ -87,6 +87,11 @@ describe("sqlite database", () => {
     result = conn.query().from("persons2").select('*').where('name','meow2').get();
     expect(result[0].age).toBe(202);
 
+    result = conn.query().from("persons2").select('*').where('name','meow2').get();
+    expect(result.length).toBe(1);
+    conn.query().from('persons2').where('name','meow2').delete();
+    result = conn.query().from("persons2").select('*').where('name','meow2').get();
+    expect(result.length).toBe(0);
   });
 
   // test("raw testing", () => {

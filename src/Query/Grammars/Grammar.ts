@@ -552,10 +552,10 @@ export abstract class Grammar extends BaseGrammar {
     }
 
     compileDelete(query: any): string {
-        const table = this.wrapTable(query.from);
+        const table = this.wrapTable(query._from);
         const where = this.compileWheres(query);
 
-        if (query.joins) {
+        if (query._joins.length) {
             return this.compileDeleteWithJoins(query, table, where);
         } else {
             return this.compileDeleteWithoutJoins(query, table, where);
@@ -573,7 +573,9 @@ export abstract class Grammar extends BaseGrammar {
     }
 
     prepareBindingsForDelete(bindings: any): any[] {
-        return this.arrFlatten(this.arrExcept(bindings, ['select']));
+        const cleanBindings = this.arrExcept(bindings, ['select']);
+        const flatValues = this.arrFlatten(Object.values(cleanBindings));
+        return flatValues;
     }
 
     compileTruncate(query: any): any {
