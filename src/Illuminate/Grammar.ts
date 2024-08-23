@@ -82,7 +82,8 @@ export class Grammar
 
     isExpression(value: any): value is Expression
     {
-        return typeof value === 'object' && 'getValue' in value && typeof (value as Expression).getValue === 'function';
+        let rc = typeof value === 'object' && 'getValue' in value && typeof (value as Expression).getValue === 'function';
+        return rc;
     }
 
     getValue(expression: Expression | string | number | boolean): any
@@ -116,7 +117,8 @@ export class Grammar
 
     parameter(value: any): string
     {
-        return this.isExpression(value) ? this.getValue(value) : '?';
+        let rc = this.isExpression(value) ? this.getValue(value) : '?';
+        return rc;
     }
 
     quoteString(value: string | string[]): string

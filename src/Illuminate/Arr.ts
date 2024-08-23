@@ -9,7 +9,7 @@ export default class Arr {
         return Array.isArray(value)? value : [value];
     }
 
-    public static flatten(array: any, depth: number = Infinity): any[] | any {
+    public static flatten(array: any, depth: number = Infinity): any[] {
         if(Array.isArray(array)) {
             let result: any[] = [];
             for (const item of array) {
@@ -31,7 +31,7 @@ export default class Arr {
             return result;
         }
         else {
-            let result: any = {};
+            let result: any = [];
             for (const key of Object.keys(array)) {
                 let value = array[key];
 

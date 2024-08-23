@@ -10,7 +10,7 @@ describe("where clause", () => {
   beforeEach(async () => {
     db_name = tmp.fileSync({ prefix: 'sqlite-test-', postfix: '.db' }).name;
 
-    console.log("test sqlitefilename", db_name);
+    // console.log("test sqlitefilename", db_name);
     const db = await open({
         filename: db_name,
         driver: sqlite3.Database
@@ -51,25 +51,23 @@ describe("where clause", () => {
     const conn = new SqliteConnection(db_name);
     const qb = conn.query().select("*").from("table").where("col1", "=", "value");
 
-    expect(qb.toSql()).toBe('select * from "table" where col1 = ?');
+    expect(qb.toSql()).toBe('select * from "table" where "col1" = ?');
+    expect(qb.getBindings()).toStrictEqual(['value']);
   });
 
   test("where 2", () => {
     const conn = new SqliteConnection(db_name);
     const qb = conn.query().select("*").from("table").whereIn("col1", [1, 2, 3, 4]);
 
-    expect(qb.toSql()).toBe(
-      "select * from \"table\" where col1 = ANY(ARRAY[1, 2, 3, 4])",
-    );
+    expect(qb.toSql()).toBe("select * from \"table\" where \"col1\" = ANY(ARRAY[1, 2, 3, 4])");
   });
 
   test("where 3", () => {
     const conn = new SqliteConnection(db_name);
     const qb = conn.query().select("*").from("table").whereBetween("col1", [111, 222]);
 
-    expect(qb.toSql()).toBe(
-      "select * from \"table\" where col1 BETWEEN 111 AND 222",
-    );
+    expect(qb.toSql()).toBe("select * from \"table\" where \"col1\" between ? and ?");
+    expect(qb.getBindings()).toStrictEqual([111,222]);
   });
 
   test("where 4", () => {
@@ -82,9 +80,8 @@ describe("where clause", () => {
         ["subscribed", "<>", "1"],
       ]);
 
-    expect(qb.toSql()).toBe(
-      "select * from \"table\" where status = '1' AND subscribed <> '1'",
-    );
+    expect(qb.toSql()).toBe("select * from \"table\" where \"status\" = '1' and \"subscribed\" <> '1'");
+    expect(qb.getBindings()).toStrictEqual(['1','1']);
   });
   test("where 5", () => {
     const conn = new SqliteConnection(db_name);
@@ -94,11 +91,8 @@ describe("where clause", () => {
       .where("col1", "=", "value")
       .where("col2", "=", "value2");
 
-    expect(qb.toSql()).toBe(
-      "select * from \"table\" where col1 = ? and col2 = ?"
-    );
-
-    expect(qb.getBindings()).toBe(['value1','value']);
+    expect(qb.toSql()).toBe("select * from \"table\" where \"col1\" = ? and \"col2\" = ?");
+    expect(qb.getBindings()).toStrictEqual(['value','value2']);
   });
 
   test("orWhere", () => {
@@ -109,8 +103,8 @@ describe("where clause", () => {
       .where("col1", "=", "value")
       .orWhere("col2", "=", "value2");
 
-    expect(qb.toSql()).toBe("select * from \"table\" where col1 = ? or col2 = ?");
-    expect(qb.getBindings()).toBe(['value1','value']);
+    expect(qb.toSql()).toBe("select * from \"table\" where \"col1\" = ? or \"col2\" = ?");
+    expect(qb.getBindings()).toStrictEqual(['value','value2']);
   });
 
   test("orWhere", () => {
@@ -140,9 +134,7 @@ describe("where clause", () => {
     const conn = new SqliteConnection(db_name);
     const qb = conn.query().select("*").from("table").orWhereColumn("col1", "!=", "col2");
 
-    expect(qb.toSql()).toBe(
-      "select * from \"table\" where not col1 = col2",
-    );
+    expect(qb.toSql()).toBe("select * from \"table\" where \"col1\" != \"col2\"");
   });
 
   test("where not2", () => {
@@ -151,9 +143,8 @@ describe("where clause", () => {
       .where("col3","=","val1")
       .orWhereColumn("col1", "=", "col2");
 
-    expect(qb.toSql()).toBe(
-      "select * from \"table\" where col3 = 'val1' OR col1 = col2",
-    );
+    expect(qb.toSql()).toBe("select * from \"table\" where \"col3\" = ? or \"col1\" = \"col2\"");
+    expect(qb.getBindings()).toStrictEqual(['val1']);
   });
 
   test("whereExists", () => {
@@ -162,7 +153,7 @@ describe("where clause", () => {
       .whereExists(conn.query().raw("select 1 from table2 where col2 = 'value1'"));
 
       expect(qb.toSql()).toBe(
-        "select * from \"table\" where EXISTS ( select 1 from table2 where col2 = 'value1' )"
+        "select * from \"table\" where exists ( select 1 from table2 where col2 = 'value1' )"
       );
   });
 
@@ -172,7 +163,7 @@ describe("where clause", () => {
     .whereNull("col1");
 
     expect(qb.toSql()).toBe(
-      "select * from \"table\" where col1 IS NULL"
+      "select * from \"table\" where \"col1\" is null"
     );
   });
 

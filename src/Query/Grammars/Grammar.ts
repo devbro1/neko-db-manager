@@ -372,17 +372,17 @@ export abstract class Grammar extends BaseGrammar {
         return `limit ${parseInt(limit.toString(), 10)}`;
     }
 
-    parameter(value: any): string {
-        if (typeof value === 'string') {
-            return `'${value.replace(/'/g, "''")}'`; // Properly escape strings
-        } else if (typeof value === 'number') {
-            return ""+value;
-        } else if (value === null) {
-            return 'NULL';
-        } else {
-            return value.toString();
-        }
-    }
+    // parameter(value: any): string {
+    //     if (typeof value === 'string') {
+    //         return `'${value.replace(/'/g, "''")}'`; // Properly escape strings
+    //     } else if (typeof value === 'number') {
+    //         return ""+value;
+    //     } else if (value === null) {
+    //         return 'NULL';
+    //     } else {
+    //         return value.toString();
+    //     }
+    // }
 
     compileGroupLimit(query: any): string {
         const selectBindings = [...query.getRawBindings()['select'], ...query.getRawBindings()['order']];
@@ -463,7 +463,6 @@ export abstract class Grammar extends BaseGrammar {
     }
 
     compileUnionAggregate(query: any): string {
-        console.log(query);
         const sql = this.compileAggregate(query, query._aggregate);
         query._aggregate = [];
         return `${sql} from (${this.compileSelect(query)}) as ${this.wrapTable('temp_table')}`;
@@ -635,9 +634,27 @@ export abstract class Grammar extends BaseGrammar {
 
     compileWhere(query: any, where: any): string {
         // Placeholder for where compilation logic
-        if(where.type === 'Basic') {
-            return [where.boolean, where.column, where.operator, '?'].join(' ');
+        let f_name = 'where' + where.type;
+        // @ts-ignore
+        if(typeof this[f_name] === 'function') {
+            // @ts-ignore
+            return where.boolean + ' ' + this[f_name](query,where);
         }
+        
+        // if(where.type === 'Basic') {
+        //     return [where.boolean, where.column, where.operator, '?'].join(' ');
+        // }
+        // else if(where.type === 'Between') {
+        //     return [where.boolean, where.column, 'between', '?', 'and','?'].join(' ');
+        // }
+        // else if(where.type === 'Column') {
+        //     return [where.boolean, where.first, where.operator, where.second].join(' ');
+        // }
+        // else if(where.type === 'Null') {
+        //     return [where.boolean, where.column, 'is null'].join(' ');
+        // }
+
+        console.log(where);
         return 'WHERE NOT IMPLEMENTED'; // Actual implementation needed based on 'where' type
     }
 

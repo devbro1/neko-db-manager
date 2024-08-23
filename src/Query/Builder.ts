@@ -283,6 +283,17 @@ export class Builder
 
     public getBindings(): any[] {
         return Arr.flatten(this._bindings);
+        // return [       
+        //     ...this._bindings.select,
+        //     ...this._bindings.from,
+        //     ...this._bindings.join,
+        //     ...this._bindings.where,
+        //     ...this._bindings.groupBy,
+        //     ...this._bindings.having,
+        //     ...this._bindings.order,
+        //     ...this._bindings.union,
+        //     ...this._bindings.unionOrder
+        // ];
     }
 
     joinWhere(table: Expression | string, first: Function | Expression | string, operator: string, second: Expression | string, type: string = 'inner'): this
@@ -662,7 +673,7 @@ export class Builder
 
     whereBetween(column: Expression | string, values: ColumnValueBetween, boolean: string = 'and', not: boolean = false): this
     {
-        const type = 'between';
+        const type = 'Between';
 
         this._wheres.push({ type, column, values, boolean, not });
         this.addBinding(Array.from(values).slice(0, 2), 'where');
