@@ -237,6 +237,7 @@ export class Builder
 
     from(table: Expression | Function | Builder | string, as: string | null =''): this
     {
+        console.log(this);
         if (this.isQueryable(table))
         {
             return this.fromSub(table, as ?? '');

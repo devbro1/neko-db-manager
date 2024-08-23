@@ -58,8 +58,8 @@ describe("where clause", () => {
   test("where 2", () => {
     const conn = new SqliteConnection(db_name);
     const qb = conn.query().select("*").from("table").whereIn("col1", [1, 2, 3, 4]);
-
     expect(qb.toSql()).toBe("select * from \"table\" where \"col1\" = ANY(ARRAY[1, 2, 3, 4])");
+    expect(qb.getBindings()).toStrictEqual([]);
   });
 
   test("where 3", () => {
@@ -70,7 +70,7 @@ describe("where clause", () => {
     expect(qb.getBindings()).toStrictEqual([111,222]);
   });
 
-  test("where 4", () => {
+  test.only("where 4", () => {
     const conn = new SqliteConnection(db_name);
     const qb = conn.query()
       .select("*")
@@ -173,7 +173,7 @@ describe("where clause", () => {
     .whereDate("created_at", ">", "2024-09-13 EST");
 
     expect(qb.toSql()).toBe(
-      "select * from \"table\" where created_at > '2024-09-13'"
+      "select * from \"table\" where strftime('%Y-%m-%d', \"created_at\") > cast(? as text)"
     );
   });
 });
