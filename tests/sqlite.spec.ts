@@ -1,19 +1,14 @@
 import { describe, expect, test } from "@jest/globals";
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
-import { Query } from "../src/index";
-import { listeners } from "process";
-import { Connection } from "pg";
 import { SqliteConnection } from "../src/Schema/Connections/SqliteConnection";
 import tmp from 'tmp';
-import Database from 'better-sqlite3';
-import os from 'os';
 import * as fs from 'fs';
 
 
-let db_name = '';
+
 describe("sqlite database", () => {
-  let query: any;
+  let db_name = '';
   beforeEach(async () => {
     db_name = tmp.fileSync({ prefix: 'sqlite-test-', postfix: '.db' }).name;
 
@@ -50,7 +45,7 @@ describe("sqlite database", () => {
     await db.close();
   });
 
-  afterAll(() => {
+  afterEach(() => {
     fs.unlinkSync(db_name);
   });
   
@@ -71,7 +66,7 @@ describe("sqlite database", () => {
   });
 
 
-  test.only("sqlite insert,update,delete", () => {
+  test("sqlite insert,update,delete", () => {
     let result;
     const conn = new SqliteConnection(db_name);
 
@@ -93,12 +88,4 @@ describe("sqlite database", () => {
     result = conn.query().from("persons2").select('*').where('name','meow2').get();
     expect(result.length).toBe(0);
   });
-
-  // test("raw testing", () => {
-  //   let db = new Database('/tmp/database.db');
-
-  //   let stmt = db.prepare('select *, :age from persons where age > :age');
-  //   let rc = stmt.all({age: 85});
-  //   console.log(rc);
-  // });
 });

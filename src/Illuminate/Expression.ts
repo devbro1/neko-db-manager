@@ -7,4 +7,8 @@ export class Expression
     getValue(value: any=''): any {
         return this.raw_sql;
     }
+
+    public getBindings(): any[] {
+        return [];
+    }
 }

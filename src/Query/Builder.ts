@@ -847,9 +847,9 @@ export class Builder
         return this;
     }
 
-    whereExists(callback: Function | Builder , boolean: string = 'and', not: boolean = false): this
+    whereExists(callback: Function | Builder | Expression, boolean: string = 'and', not: boolean = false): this
     {
-        let query: Builder;
+        let query: Builder | Expression;
         if (typeof callback === 'function')
         {
             query = this.forSubQuery();
@@ -876,7 +876,7 @@ export class Builder
         return this.orWhereExists(callback, true);
     }
 
-    addWhereExistsQuery(query: Builder, boolean: string = 'and', not: boolean = false): this
+    addWhereExistsQuery(query: Builder | Expression, boolean: string = 'and', not: boolean = false): this
     {
         const type = not ? 'NotExists' : 'Exists';
         this._wheres.push({ type, query, boolean });
