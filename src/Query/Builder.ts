@@ -237,7 +237,6 @@ export class Builder
 
     from(table: Expression | Function | Builder | string, as: string | null =''): this
     {
-        console.log(this);
         if (this.isQueryable(table))
         {
             return this.fromSub(table, as ?? '');
@@ -478,8 +477,9 @@ export class Builder
     {
         return this.whereNested((query:any) =>
         {
-            for (const key in column)
+            for (const key2 in column)
             {
+                let key = Number.parseInt(key2);
                 const value = column[key];
                 if (typeof key === 'number' && Array.isArray(value))
                 {
@@ -829,7 +829,7 @@ export class Builder
 
     forNestedWhere(): Builder
     {
-        return this.newQuery().from(this.from);
+        return this.newQuery().from(this._from);
     }
 
     addNestedWhereQuery(query: Builder, boolean: string = 'and'): this

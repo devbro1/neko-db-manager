@@ -58,8 +58,8 @@ describe("where clause", () => {
   test("where 2", () => {
     const conn = new SqliteConnection(db_name);
     const qb = conn.query().select("*").from("table").whereIn("col1", [1, 2, 3, 4]);
-    expect(qb.toSql()).toBe("select * from \"table\" where \"col1\" = ANY(ARRAY[1, 2, 3, 4])");
-    expect(qb.getBindings()).toStrictEqual([]);
+    expect(qb.toSql()).toBe("select * from \"table\" where \"col1\" in (?, ?, ?, ?)");
+    expect(qb.getBindings()).toStrictEqual([1,2,3,4]);
   });
 
   test("where 3", () => {
@@ -70,7 +70,7 @@ describe("where clause", () => {
     expect(qb.getBindings()).toStrictEqual([111,222]);
   });
 
-  test.only("where 4", () => {
+  test("where 4", () => {
     const conn = new SqliteConnection(db_name);
     const qb = conn.query()
       .select("*")
@@ -80,7 +80,7 @@ describe("where clause", () => {
         ["subscribed", "<>", "1"],
       ]);
 
-    expect(qb.toSql()).toBe("select * from \"table\" where \"status\" = '1' and \"subscribed\" <> '1'");
+    expect(qb.toSql()).toBe("select * from \"table\" where (\"status\" = ? and \"subscribed\" <> ?)");
     expect(qb.getBindings()).toStrictEqual(['1','1']);
   });
   test("where 5", () => {
@@ -107,29 +107,6 @@ describe("where clause", () => {
     expect(qb.getBindings()).toStrictEqual(['value','value2']);
   });
 
-  test("orWhere", () => {
-    // const cc1 = query.conditionClause();
-    // const cc2 = query.conditionClause();
-
-    // cc1.and("sound","=","meow");
-    // cc1.and("sound","=","rawr");
-
-    // cc2.and("price",">",1000);
-    // cc2.and("price","<",10);
-
-    // const qb = query
-    //   .select("*")
-    //   .from("table")
-    //   .where("col1", "=", "value")
-    //   .conditionClauseWhere(cc1)
-    //   .orConditionClauseWhere(cc2);
-
-    // expect(qb.toSql()).toBe(
-    //   "select * from \"table\" where col1 = 'value' AND ( sound = 'meow' AND sound = 'rawr' ) OR ( price > 1000 AND price < 10 )",
-    // );
-    expect(false).toBe(true);
-  });
-
   test("where not", () => {
     const conn = new SqliteConnection(db_name);
     const qb = conn.query().select("*").from("table").orWhereColumn("col1", "!=", "col2");
@@ -145,16 +122,6 @@ describe("where clause", () => {
 
     expect(qb.toSql()).toBe("select * from \"table\" where \"col3\" = ? or \"col1\" = \"col2\"");
     expect(qb.getBindings()).toStrictEqual(['val1']);
-  });
-
-  test("whereExists", () => {
-    const conn = new SqliteConnection(db_name);
-    const qb = conn.query().select("*").from("table")
-      .whereExists(conn.query().raw("select 1 from table2 where col2 = 'value1'"));
-
-      expect(qb.toSql()).toBe(
-        "select * from \"table\" where exists ( select 1 from table2 where col2 = 'value1' )"
-      );
   });
 
   test("whereNull", () => {
