@@ -12,7 +12,7 @@ describe("sqlite database", () => {
   beforeEach(async () => {
     db_name = tmp.fileSync({ prefix: 'sqlite-test-', postfix: '.db' }).name;
 
-    console.log("test sqlitefilename", db_name);
+    // console.log("test sqlitefilename", db_name);
     const db = await open({
         filename: db_name,
         driver: sqlite3.Database

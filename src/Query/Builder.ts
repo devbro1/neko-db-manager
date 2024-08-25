@@ -1794,10 +1794,9 @@ export class Builder
         }
         values.forEach((value: {}) => Object.keys(value).sort());
         this.applyBeforeQueryCallbacks();
-        return this._connection.insert(
-            this._grammar.compileInsert(this, values),
-            this.flattenValues(values)
-        );
+        const sql = this._grammar.compileInsert(this, values);
+        const bindings = this.flattenValues(values);
+        return this._connection.insert( sql, bindings );
     }
 
     flattenValues<T>(array: T[], depth: number = Infinity): T[] {
@@ -1811,6 +1810,10 @@ export class Builder
                     const values = this.flattenValues(item, depth - 1);
                     result.push(...values);
                 }
+            } else if(typeof item === 'object') {
+                // @ts-ignore
+                const v: any[] = Object.values(item);
+                result = result.concat(v);
             } else {
                 result.push(item);
             }

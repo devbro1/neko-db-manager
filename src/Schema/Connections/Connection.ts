@@ -178,7 +178,7 @@ export abstract class Connection
 
             const statement = this.prepare(query);
             this.recordsHaveBeenModified();
-            return statement.run();
+            return statement.run(bindings);
         });
     }
 
