@@ -5,8 +5,6 @@ import { SqliteConnection } from "../src/Schema/Connections/SqliteConnection";
 import tmp from 'tmp';
 import * as fs from 'fs';
 
-
-
 describe("sqlite database", () => {
   let db_name = '';
   beforeEach(async () => {
